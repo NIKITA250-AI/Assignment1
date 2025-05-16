@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Save and Load Notes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f4f4f4;
+    }
+    .note-container {
+      width: 80%;
+      max-width: 600px;
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    textarea {
+      width: 100%;
+      height: 150px;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-bottom: 20px;
+      box-sizing: border-box;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .clear-btn {
+      background-color: #f44336;
+    }
+    .clear-btn:hover {
+      background-color: #e53935;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="note-container">
+    <h2>Save and Load Your Notes</h2>
+    <textarea id="note-text" placeholder="Write your notes here..."></textarea><br>
+    <button id="save-btn">Save Notes</button>
+    <button id="load-btn">Load Notes</button>
+    <button id="clear-btn" class="clear-btn">Clear Notes</button>
+  </div>
+
+  <script>
+ 
+    function saveNotes() {
+      const noteText = document.getElementById('note-text').value.trim();
+      if (noteText === '') {
+        alert('Please write something before saving.');
+        return;
+      }
+      localStorage.setItem('userNotes', noteText);
+      alert('Notes saved successfully!');
+    }
+
+    function loadNotes() {
+      const savedNotes = localStorage.getItem('userNotes');
+      if (savedNotes) {
+        document.getElementById('note-text').value = savedNotes;
+      } else {
+        alert('No saved notes found.');
+      }
+    }
+
+    function clearNotes() {
+      localStorage.removeItem('userNotes');
+      document.getElementById('note-text').value = '';
+      alert('Notes cleared!');
+    }
+
+    document.getElementById('save-btn').addEventListener('click', saveNotes);
+    document.getElementById('load-btn').addEventListener('click', loadNotes);
+    document.getElementById('clear-btn').addEventListener('click', clearNotes);
+
+    window.onload = function() {
+      loadNotes();
+    }
+  </script>
