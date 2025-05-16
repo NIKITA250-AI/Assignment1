@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Theme Selector</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      transition: background-color 0.3s, color 0.3s;
+      padding: 20px;
+    }
+
+    /* Light Theme */
+    .light-theme {
+      background-color: #ffffff;
+      color: #000000;
+    }
+
+    /* Dark Theme */
+    .dark-theme {
+      background-color: #333333;
+      color: #ffffff;
+    }
+
+    /* Blue Theme */
+    .blue-theme {
+      background-color: #1e90ff;
+      color: #ffffff;
+    }
+
+    select {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Dynamic Theme Selector</h1>
+  <label for="theme-selector">Choose Theme:</label>
+  <select id="theme-selector">
+    <option value="light">Light</option>
+    <option value="dark">Dark</option>
+    <option value="blue">Blue</option>
+  </select>
+
+  <script>
+  
+    function applyTheme(theme) {
+      document.body.classList.remove('light-theme', 'dark-theme', 'blue-theme');
+      document.body.classList.add(`${theme}-theme`);
+      sessionStorage.setItem('selectedTheme', theme);
+    }
+
+    document.getElementById('theme-selector').addEventListener('change', function() {
+      const selectedTheme = this.value;
+      applyTheme(selectedTheme);
+    });
+
+    window.onload = function() {
+      const savedTheme = sessionStorage.getItem('selectedTheme') || 'light'; 
+      document.getElementById('theme-selector').value = savedTheme;
+      applyTheme(savedTheme);
+    };
+  </script>
+
+</body>
+</html>
