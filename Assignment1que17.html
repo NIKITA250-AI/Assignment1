@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Firebase Todo App</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    input, button, select { padding: 5px; margin: 5px; }
+    li { margin: 5px 0; }
+    .completed { text-decoration: line-through; color: gray; }
+    #status { font-size: 0.9em; color: #666; }
+  </style>
+</head>
+<body>
+
+  <h2>Firebase Todo App</h2>
+
+  <input type="text" id="todoInput" placeholder="Enter new todo">
+  <button onclick="addTodo()">Add</button>
+  <select id="filter" onchange="renderTodos()">
+    <option value="all">All</option>
+    <option value="completed">Completed</option>
+    <option value="incomplete">Incomplete</option>
+  </select>
+
+  <p id="status">Loading...</p>
+  <ul id="todoList"></ul>
+
+  
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
+  <script>
+
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const todosRef = db.ref("todos");
+
+    const todoInput = document.getElementById("todoInput");
+    const todoList = document.getElementById("todoList");
+    const status = document.getElementById("status");
+    const filter = document.getElementById("filter");
+
+    let todos = {};
+
+    todosRef.on("value", snapshot => {
+      todos = snapshot.val() || {};
+      renderTodos();
+      status.textContent = "Synced!";
+    });
+
+    function addTodo() {
+      const text = todoInput.value.trim();
+      if (!text) return alert("Enter a todo");
+
+      const newTodoRef = todosRef.push();
+      const todo = { text, completed: false };
+      status.textContent = "Saving...";
+      newTodoRef.set(todo, () => {
+        status.textContent = "Synced!";
+        todoInput.value = "";
+      });
+    }
+
+    function toggleComplete(id) {
+      const current = todos[id];
+      if (!current) return;
+      status.textContent = "Saving...";
+      todosRef.child(id).update({ completed: !current.completed });
+    }
+
+    function renderTodos() {
+      todoList.innerHTML = "";
+      const selectedFilter = filter.value;
+
+      for (let id in todos) {
+        const { text, completed } = todos[id];
+        if (selectedFilter === "completed" && !completed) continue;
+        if (selectedFilter === "incomplete" && completed) continue;
+
+        const li = document.createElement("li");
+        li.className = completed ? "completed" : "";
+        li.textContent = text;
+        li.onclick = () => toggleComplete(id);
+        todoList.appendChild(li);
+      }
+
+      if (Object.keys(todos).length === 0) {
+        status.textContent = "No todos found.";
+      }
+    }
+  </script>
+</body>
+</html>
